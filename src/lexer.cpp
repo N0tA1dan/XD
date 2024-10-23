@@ -4,7 +4,7 @@
 #include <vector>
 
 enum class TokenType{
-  _return,
+  _exit,
   INT_LIT,
   DOUBLE_QUOTE,
   SEMI
@@ -20,7 +20,7 @@ private:
     std::string m_src;
     int m_index = 0;
     
-    std::optional<char> peek(int offset  = 0){
+    [[nodiscard]] std::optional<char> peek(int offset  = 0){
         if(m_index + offset >= m_src.length()){
             return std::nullopt;
         } else{
@@ -51,8 +51,8 @@ public:
                     continue;
                 }
 
-                if(buf == "return"){
-                    tokens.push_back({TokenType::_return});
+                if(buf == "exit"){
+                    tokens.push_back({TokenType::_exit});
                     buf.clear();
                     continue;
                 }
@@ -109,7 +109,7 @@ int main(int argc, char * argv[]){
 
   for (const auto& token : tokens) {
       switch (token.type) {
-          case TokenType::_return: std::cout << "return "; break;
+          case TokenType::_exit: std::cout << "exit "; break;
           case TokenType::INT_LIT: std::cout << *token.value << " "; break;
           case TokenType::SEMI: std::cout << "; "; break;
           default: break;
