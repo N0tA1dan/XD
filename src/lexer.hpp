@@ -9,8 +9,8 @@ enum class TokenType{
   STRING_LIT,
   PLUS,
   MINUS,
-  DIVISION,
   MULTIPLY,
+  DIVIDE,
   SEMI
 };
 
@@ -105,6 +105,12 @@ public:
 
             if(peek().value() == '*'){
                 tokens.push_back({TokenType::MULTIPLY});
+                consume();
+                continue;
+            }
+
+            if(peek().value() == '/'){
+                tokeks.push_back({TokenType::DIVIDE});
                 consume();
                 continue;
             }
