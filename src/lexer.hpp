@@ -110,7 +110,7 @@ public:
             }
 
             if(peek().value() == '/'){
-                tokeks.push_back({TokenType::DIVIDE});
+                tokens.push_back({TokenType::DIVIDE});
                 consume();
                 continue;
             }
