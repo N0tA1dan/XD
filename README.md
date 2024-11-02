@@ -24,3 +24,6 @@ november 2nd 2024:
     So here we could implement in our code to "derive forward" until we dont see the string/token.
 
     here im using string as an example, but it could be another non-terminal or token thats not the actual non-terminal of the production.
+
+
+    remember a recursive descent parser uses recursive (or non recursive) functions that match the grammar directly.
