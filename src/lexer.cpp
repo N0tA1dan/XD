@@ -97,8 +97,14 @@ public:
                 continue;
             }
 
-            if(peek().value() =- '-'){
+            if(peek().value() == '-'){
                 tokens.push_back({TokenType::MINUS});
+                consume();
+                continue;
+            }
+
+            if(peek().value() == '*'){
+                tokens.push_back({TokenType::MULTIPLY});
                 consume();
                 continue;
             }
