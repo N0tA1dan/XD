@@ -4,9 +4,13 @@
 #include <vector>
 
 enum class TokenType{
-  _exit,
+  _return,
   INT_LIT,
-  DOUBLE_QUOTE,
+  STRING_LIT,
+  PLUS,
+  MINUS,
+  DIVISION,
+  MULTIPLY,
   SEMI
 };
 
@@ -16,6 +20,7 @@ struct Token{
 };
 
 class Tokenizer{
+    
 private:
     std::string m_src;
     int m_index = 0;
@@ -44,6 +49,8 @@ public:
         std::vector<Token> tokens;
 
         while(peek().has_value()){
+
+            // handles keywords
             if(std::isalpha(peek().value())){
                 buf.push_back(consume());
                 while(peek().has_value() && std::isalnum(peek().value())){
@@ -51,14 +58,15 @@ public:
                     continue;
                 }
 
-                if(buf == "exit"){
-                    tokens.push_back({TokenType::_exit});
+                if(buf == "return"){
+                    tokens.push_back({TokenType::_return});
                     buf.clear();
                     continue;
                 }
                 continue;
             }
-
+            
+            // Handles integer literals
             if(std::isdigit(peek().value())){
                 buf.push_back(consume());
                 while(peek().has_value() && std::isdigit(peek().value())){
@@ -67,6 +75,32 @@ public:
                 
                 tokens.push_back({TokenType::INT_LIT, buf});
                 buf.clear();
+            }
+
+            // Handles string literals
+            if(peek().value() == '"'){
+                consume();
+                while(peek().has_value() && peek().value() != '"'){
+                    buf.push_back(consume());
+                }
+
+                if(peek().has_value() && peek().value() == '"'){
+                    consume();
+                    tokens.push_back({TokenType::STRING_LIT, buf});
+                    buf.clear();
+                }
+            }
+
+            if(peek().value() == '+'){
+                tokens.push_back({TokenType::PLUS});
+                consume();
+                continue;
+            }
+
+            if(peek().value() =- '-'){
+                tokens.push_back({TokenType::MINUS});
+                consume();
+                continue;
             }
 
             if(peek().value() == ';'){
@@ -91,29 +125,3 @@ public:
 
 
 };
-
-
-int main(int argc, char * argv[]){
-  
-  std::ifstream inputFile(argv[1]);
-  if (!inputFile) {
-      std::cerr << "Could not open file: " << argv[1] << std::endl;
-      return 1;
-  }
-
-  std::string code((std::istreambuf_iterator<char>(inputFile)),
-                   std::istreambuf_iterator<char>());
-
-  Tokenizer tokenizer(code);
-  std::vector<Token> tokens = tokenizer.tokenize();
-
-  for (const auto& token : tokens) {
-      switch (token.type) {
-          case TokenType::_exit: std::cout << "exit "; break;
-          case TokenType::INT_LIT: std::cout << *token.value << " "; break;
-          case TokenType::SEMI: std::cout << "; "; break;
-          default: break;
-      }
-  }
-
-}
