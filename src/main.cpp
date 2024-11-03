@@ -31,6 +31,7 @@ int main(int argc, char * argv[]){
           case TokenType::SEMI: std::cout << "; "; break;
           case TokenType::STRING_LIT: std::cout << "STRING_LIT value: " << *token.value << std::endl; break;
           case TokenType::PLUS: std::cout << "PLUS_TOKEN" << std::endl; break;
+          case TokenType::MINUS: std::cout << "MINUS_TOKEN" << std::endl; break;
           default: break;
       }
   }
