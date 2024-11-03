@@ -27,3 +27,6 @@ november 2nd 2024:
 
 
     remember a recursive descent parser uses recursive (or non recursive) functions that match the grammar directly.
+
+November 3rd 2024:
+    changed grammar and changed parser.

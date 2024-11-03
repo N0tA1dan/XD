@@ -1,4 +1,3 @@
-NodeReturn ::= <expression>
-expression ::= <term> '+' <expression> | <term> '-' <expression> | <term>
-term :: <factor> '*' <term> | <factor> '/' <term> | <factor>
-factor ::= int_lit | var 
+<prog> ::= <stmt>*
+<stmt> ::= exit '(' expr ')' | LET IDENTIFIER '=' <expr>
+<expr> ::= INT_LIT | STRING_LIT

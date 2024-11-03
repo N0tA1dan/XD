@@ -5,13 +5,16 @@
 
 enum class TokenType{
   _return,
+  LET,
+  IDENTIFIER,
+  EQUALS,
   INT_LIT,
   STRING_LIT,
   PLUS,
   MINUS,
   MULTIPLY,
   DIVIDE,
-  SEMI
+  SEMI,
 };
 
 struct Token{
@@ -63,6 +66,19 @@ public:
                     buf.clear();
                     continue;
                 }
+
+                if(buf == "let"){
+                    tokens.push_back({TokenType::LET});
+                    buf.clear();
+                    continue;
+                }
+
+                else{
+                    tokens.push_back({TokenType::IDENTIFIER, buf});
+                    buf.clear();
+                    continue;
+                }
+
                 continue;
             }
             
@@ -89,6 +105,12 @@ public:
                     tokens.push_back({TokenType::STRING_LIT, buf});
                     buf.clear();
                 }
+            }
+
+            if(peek().value() == '='){
+                tokens.push_back({TokenType::EQUALS});
+                consume();
+                continue;
             }
 
             if(peek().value() == '+'){
