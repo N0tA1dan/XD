@@ -3,6 +3,7 @@
 #include <optional>
 #include <vector>
 
+// defines tokentypes here
 enum class TokenType{
   _return,
   LET,

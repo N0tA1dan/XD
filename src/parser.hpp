@@ -4,7 +4,8 @@
 #include <vector>
 #include <optional>
 #include <variant>
-
+#include <string>
+#include <sstream>
 
 
 struct NodeExpr{
@@ -51,6 +52,7 @@ public:
 
     std::optional<NodeStmt> ParseStmt() {
 
+        // parses return statements
         if (peek().value().type == TokenType::_return) {
             consume(); // consume return token
 
@@ -74,6 +76,7 @@ public:
             return NodeStmt { returnstmt };
         }
 
+        // parses let statements
         if (peek().value().type == TokenType::LET) {
             consume(); // consume let token
 
@@ -131,6 +134,9 @@ private:
 
     int m_index = 0;
     std::vector<Token> m_tokens;
+
+    // a visual representation of the ast tree
+    std::stringstream pretty_ast;
 
     [[nodiscard]] std::optional<Token> peek(int offset = 0){
         if(m_index + offset >= m_tokens.size()){

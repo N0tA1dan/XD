@@ -55,3 +55,6 @@ November 6 2024:
     Each type in the variant has an associated index, which is fixed at compile time. This index is essentially the position of the type in the list of types Ts... provided to std::variant<Ts...>.
     
     The type index allows std::visit to know the currently active type, so it can correctly call the appropriate visitor function.
+
+Novemeber 7 2024:
+    Added printing for the parse tree. you can now use print_prog() to print the entire programs ast tree.

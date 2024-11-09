@@ -6,6 +6,7 @@
 #include "lexer.hpp"
 #include "parser.hpp"
 #include "generation.hpp"
+#include "ast.hpp"
 
 void printTokens(std::vector<Token> tokens){
     for (const auto& token : tokens) {
@@ -43,9 +44,10 @@ int main(int argc, char * argv[]){
 
     //printTokens(tokens);
     //std::cout << prog->stmts.size();
+    AST ast(prog.value());
+    ast.print_ast();
 
-    Generator generator(prog.value());
-    std::string assembly = generator.gen_prog();
-
-    std::cout << assembly;
+    //Generator generator(prog.value());
+    //std::string assembly = generator.gen_prog();
+    //std::cout << assembly;
 }
