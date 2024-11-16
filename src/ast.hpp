@@ -27,9 +27,9 @@ public:
         struct StatementVisitor{
             AST&  ast;
 
-            void operator()(NodeStmtReturn stmt_return){
-                ast.pretty_ast << "  NodeStmtReturn:\n";
-                ast.print_expression(stmt_return.expression);
+            void operator()(NodeStmtExit exit_stmt){
+                ast.pretty_ast << "  NodeStmtExit:\n";
+                ast.print_expression(exit_stmt.expression);
             }
 
             void operator()(NodeStmtLet stmt_let){

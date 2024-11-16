@@ -11,7 +11,7 @@
 void printTokens(std::vector<Token> tokens){
     for (const auto& token : tokens) {
       switch (token.type) {
-          case TokenType::_return: std::cout << "return "; break;
+          case TokenType::EXIT: std::cout << "return "; break;
           case TokenType::INT_LIT: std::cout << *token.value << " "; break;
           case TokenType::SEMI: std::cout << "; "; break;
           case TokenType::STRING_LIT: std::cout << "STRING_LIT value: " << *token.value << std::endl; break;
@@ -44,10 +44,11 @@ int main(int argc, char * argv[]){
 
     //printTokens(tokens);
     //std::cout << prog->stmts.size();
-    AST ast(prog.value());
-    ast.print_ast();
+    //AST ast(prog.value());
+    //ast.print_ast();
 
-    //Generator generator(prog.value());
-    //std::string assembly = generator.gen_prog();
-    //std::cout << assembly;
+    Generator generator(prog.value());
+    std::string assembly = generator.gen_prog();
+    
+    std::cout << assembly;
 }

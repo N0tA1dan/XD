@@ -23,14 +23,14 @@ public:
         struct StatementVisitor{
             Generator& generator;
             
-            void operator()(NodeStmtReturn returnstmt){
-                    generator.m_output << "    mov rdi, " << returnstmt.expression.var.value.value() << "\n";
+            void operator()(NodeStmtExit exitstmt){
+                    generator.m_output << "    mov rdi, " << exitstmt.expression.var.value.value() << "\n";
                     generator.m_output << "    mov rax, 60\n";
                     generator.m_output << "    syscall\n";
             };
 
             void operator()(NodeStmtLet stmtlet){
-                std::cout << "node stmtlet found";
+                std::cout << "node exitstmt found";
             };
 
         };

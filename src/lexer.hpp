@@ -5,7 +5,7 @@
 
 // defines tokentypes here
 enum class TokenType{
-  _return,
+  EXIT,
   LET,
   IDENTIFIER,
   EQUALS,
@@ -16,6 +16,8 @@ enum class TokenType{
   MULTIPLY,
   DIVIDE,
   SEMI,
+  OPEN_PAREN,
+  CLOSE_PAREN
 };
 
 struct Token{
@@ -62,8 +64,8 @@ public:
                     continue;
                 }
 
-                if(buf == "return"){
-                    tokens.push_back({TokenType::_return});
+                if(buf == "exit"){
+                    tokens.push_back({TokenType::EXIT});
                     buf.clear();
                     continue;
                 }
@@ -145,6 +147,18 @@ public:
             }
 
             if(std::isspace(peek().value())){
+                consume();
+                continue;
+            }
+
+            if(peek().value() == '('){
+                tokens.push_back({TokenType::OPEN_PAREN});
+                consume();
+                continue;
+            }
+
+            if(peek().value() == ')'){
+                tokens.push_back({TokenType::CLOSE_PAREN});
                 consume();
                 continue;
             }

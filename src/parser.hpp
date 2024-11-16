@@ -12,7 +12,7 @@ struct NodeExpr{
     Token var;
 };
 
-struct NodeStmtReturn{
+struct NodeStmtExit{
     NodeExpr expression;
 };
 
@@ -23,7 +23,7 @@ struct NodeStmtLet{
 
 
 struct NodeStmt{
-    std::variant<NodeStmtReturn, NodeStmtLet> var;
+    std::variant<NodeStmtExit, NodeStmtLet> var;
 };
 
 struct NodeProg{
@@ -40,6 +40,28 @@ public:
     {
 
     }
+
+    void tryConsume(TokenType token){
+        if(peek().has_value() && peek().value().type == token){
+            consume();
+        } else{
+            switch(token){
+                case TokenType::SEMI:
+                    std::cerr << "Expected ';' after statement";
+                    break;
+
+                case TokenType::OPEN_PAREN:
+                    std::cerr << "Expected '(' before expression";
+                    break;
+                
+                case TokenType::CLOSE_PAREN:
+                    std::cerr << "Expected ')' after expression";
+                    break;
+            }
+
+            exit(EXIT_FAILURE);
+        }
+    }
     
     std::optional<NodeExpr> ParseExpr(){
         if(peek().has_value() && (peek().value().type == TokenType::INT_LIT || peek().value().type == TokenType::STRING_LIT)){
@@ -52,29 +74,26 @@ public:
 
     std::optional<NodeStmt> ParseStmt() {
 
-        // parses return statements
-        if (peek().value().type == TokenType::_return) {
-            consume(); // consume return token
+        // parses exit statements
+        if (peek().value().type == TokenType::EXIT) {
+            consume(); // consume exit token
 
-            NodeStmtReturn returnstmt;
+            NodeStmtExit exitstmt;
+            tryConsume(TokenType::OPEN_PAREN);
 
             auto expr = ParseExpr();
             if (expr) {
-                returnstmt.expression = expr.value();
+                exitstmt.expression = expr.value();
             } else {
                 std::cerr << "Invalid Expression" << std::endl;
                 exit(EXIT_FAILURE);
             }
             
-            if(peek().has_value() && peek().value().type == TokenType::SEMI){
-                consume();
-            } else{
-                std::cerr << "Expected ';' after return statement";
-                exit(EXIT_FAILURE);
-            }
+            tryConsume(TokenType::CLOSE_PAREN);
+            tryConsume(TokenType::SEMI);
             
-            return NodeStmt { returnstmt };
-        }
+            return NodeStmt { exitstmt };
+        }   
 
         // parses let statements
         if (peek().value().type == TokenType::LET) {
