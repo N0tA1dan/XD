@@ -58,3 +58,40 @@ November 6 2024:
 
 Novemeber 7 2024:
     Added printing for the parse tree. you can now use print_prog() to print the entire programs ast tree.
+
+
+November 18 2024:
+    Going to try to implement a stack frame for local variables.
+
+    what i learned today.
+
+    rsp points to the most recently pushed element onto the stack.
+
+    for example
+
+    global _start
+
+
+    _start:
+        push 100
+        push 200
+
+        mov rax, [rsp] ;; contains 200
+
+        NOP
+
+    rax register now contains 200.
+
+
+    global _start
+
+
+    _start:
+        push 100
+        push 200
+
+        mov rax, [rsp+8] ;; contains 100
+
+        NOP
+
+    [rsp+8] just means 8 bytes ahead, since this is x64, registers are 64 bits in lenght, aka 8 bytes, so this would get the value 100 and move it into rax
