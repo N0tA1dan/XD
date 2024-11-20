@@ -95,3 +95,40 @@ November 18 2024:
         NOP
 
     [rsp+8] just means 8 bytes ahead, since this is x64, registers are 64 bits in lenght, aka 8 bytes, so this would get the value 100 and move it into rax
+
+
+November 19 2024:
+
+    RSP points to the top of the stack. 
+
+    RBP points to the "base" of the stack frame
+
+    for example
+
+    global _start
+
+_start:
+    push rbp
+    mov rbp, rsp
+
+    push 10
+    push 20
+    
+    mov rax, [rbp - 8]
+
+    pop rbp
+
+
+    NOP
+
+    here its 'rbp - 8' because rbp points to the base of the stack frame. 'rbp - 0' is just the return address i believe or the address of the previous rbp value.
+
+    intution: for each new function, make a new stack frame. this can be achieved by whenever we occur a fucntion decleration, we can do the following:
+    
+    foo:
+        push rbp
+        mov rbp, rsp
+
+    This is how all functions are made in the gcc compiler even if they dont contain any variables or return anything.
+
+    
