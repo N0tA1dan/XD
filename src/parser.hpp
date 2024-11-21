@@ -179,9 +179,6 @@ private:
     int m_index = 0;
     std::vector<Token> m_tokens;
 
-    // a visual representation of the ast tree
-    std::stringstream pretty_ast;
-
     [[nodiscard]] std::optional<Token> peek(int offset = 0){
         if(m_index + offset >= m_tokens.size()){
             return std::nullopt;

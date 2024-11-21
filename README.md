@@ -131,4 +131,28 @@ _start:
 
     This is how all functions are made in the gcc compiler even if they dont contain any variables or return anything.
 
-    
+november 21 2024:
+    I added a stack frame system almost. it doesnt work for scopes yet so maybe i have to make a vector with different scopes.
+
+    What i did was added all declared variables into a hash map, the key was the identifier and the value was the stack position.
+
+    also for now, every int is considered to be 32-bit.
+
+    one issue i have now is assigning variables to other variables.
+
+    for example:
+
+    let x = 10;
+    let y = x;
+
+    currently this is what my compiler generates:
+    mov DWORD [rbp - 4],   10
+    mov DWORD [rbp - 8],  [rbp - 4]
+
+    i dont believe memory to memory is permitted, so we need to move the value x into rax, then move rax into y, like so:
+
+    mov DWORD [rbp - 4],   10
+    mov rax, [rbp - 4]
+    mov DWORD [rbp - 8],  rax
+
+    i dont know where to start and may need some corrections on the entire generation. should be relatively simple though.
