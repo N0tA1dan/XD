@@ -7,9 +7,16 @@
 #include <string>
 #include <sstream>
 
+struct NodeIntLit{
+    Token int_lit;
+};
+
+struct NodeIdent{
+    Token ident;
+};
 
 struct NodeExpr{
-    Token var;
+    std::variant<NodeIntLit, NodeIdent> var;
 };
 
 struct NodeStmtExit{
@@ -20,7 +27,6 @@ struct NodeStmtLet{
     Token identifier;
     NodeExpr expression;
 };
-
 
 struct NodeStmt{
     std::variant<NodeStmtExit, NodeStmtLet> var;
@@ -64,15 +70,34 @@ public:
     }
     
     std::optional<NodeExpr> ParseExpr(){
-        if(peek().has_value() && (peek().value().type == TokenType::INT_LIT || peek().value().type == TokenType::STRING_LIT)){
-            NodeExpr expr = {consume()};
-            return expr;
-        } else{
-            return std::nullopt;
+        NodeExpr expr;
+        switch(peek().value().type){
+            case TokenType::INT_LIT:
+                {
+                NodeIntLit int_lit = {consume()};
+                expr.var = int_lit;
+                return expr;
+                break;
+                }
+
+            case TokenType::IDENTIFIER:
+                {
+                NodeIdent identifier = {consume()};
+                expr.var = identifier;
+                return expr;
+                break;
+                }
+
+            default:
+                {
+                return std::nullopt;
+                }
+
         }
     }
 
     std::optional<NodeStmt> ParseStmt() {
+
 
         // parses exit statements
         if (peek().value().type == TokenType::EXIT) {

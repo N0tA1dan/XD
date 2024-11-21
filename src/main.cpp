@@ -6,7 +6,6 @@
 #include "lexer.hpp"
 #include "parser.hpp"
 #include "generation.hpp"
-#include "ast.hpp"
 
 void printTokens(std::vector<Token> tokens){
     for (const auto& token : tokens) {

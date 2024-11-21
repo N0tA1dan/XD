@@ -5,12 +5,13 @@
 
 // defines tokentypes here
 enum class TokenType{
+  FUNC,
   EXIT,
   LET,
   IDENTIFIER,
-  EQUALS,
   INT_LIT,
   STRING_LIT,
+  EQUALS,
   PLUS,
   MINUS,
   MULTIPLY,
@@ -61,6 +62,12 @@ public:
                 buf.push_back(consume());
                 while(peek().has_value() && std::isalnum(peek().value())){
                     buf.push_back(consume());
+                    continue;
+                }
+
+                if(buf == "fn"){
+                    tokens.push_back({TokenType::FUNC});
+                    buf.clear();
                     continue;
                 }
 
