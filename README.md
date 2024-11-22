@@ -156,3 +156,8 @@ november 21 2024:
     mov DWORD [rbp - 8],  rax
 
     i dont know where to start and may need some corrections on the entire generation. should be relatively simple though.
+
+    this thread seemed interesting: https://news.ycombinator.com/item?id=15249994
+
+    basically instead of using std::visit, they use the index member of std::variant.
+    They use a switch statement on the index to determine the types. I might actually implement this.

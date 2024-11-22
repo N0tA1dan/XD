@@ -20,22 +20,11 @@ public:
             Generator& generator;
 
             void operator()(NodeIntLit int_lit){
-                generator.m_output << "  " << int_lit.int_lit.value.value() << "\n";
+                generator.m_output << "    " << int_lit.int_lit.value.value() << "\n";
             }
 
+            // always moves the variables value into rax
             void operator()(NodeIdent identifier){
-                /* 
-
-                TODO: 
-                check if variable has been declared already and actually exists. 
-                then return/move it from the position it is in the stack
-
-                */
-                
-                /*
-                This almost works. the only issue is when i attempt to assign variables to other declared variables
-                this can be solved by moving the value from the stack into a register like rax, then moving rax into the targetted stack position
-                */
 
                 std::unordered_map<std::string,size_t>::const_iterator got = generator.m_variables.find (identifier.ident.value.value());
 
@@ -43,8 +32,8 @@ public:
                     std::cerr << "Error: variable not declared";
                     exit(EXIT_FAILURE);
                 }else {
-                    generator.m_output
-                    generator.m_output << "    [rbp - " << generator.m_variables[identifier.ident.value.value()] * 4 <<"]\n";
+                    generator.m_output;
+                    generator.m_output << "    mov rax, [rbp - " << generator.m_variables[identifier.ident.value.value()] * 4 <<"]\n";
                 }
             }
             
@@ -59,23 +48,37 @@ public:
             Generator& generator;
             
             void operator()(NodeStmtExit exitstmt){
-                    // have to change this to mov rax into rdi. 
-                    generator.m_output << "    mov rdi,";
-                    generator.gen_expression(exitstmt.expression);
+                    generator.gen_expression(exitstmt.expression); 
+                    generator.m_output << "    mov rdi, rax\n";
                     generator.m_output << "    mov rax, 60\n";
                     generator.m_output << "    syscall\n";
             };
 
+            // the expression is actually generated here. essentially it was either using std::holds_alternative or making a different gen_expr function explicitlly for let statements
             void operator()(NodeStmtLet stmtlet){
-                /*
-                TODO:
-                Add the variable identifier and value to the m_vars. 
-                */
 
                 generator.m_variables.insert({stmtlet.identifier.value.value(), generator.m_stack_size});
-                generator.m_output << "    mov DWORD [rbp - " << (generator.m_stack_size  * 4 ) << "], "; 
-                generator.gen_expression(stmtlet.expression);
 
+                // checks if the variable is set to an immediate value like let x = 10;
+                if(std::holds_alternative<NodeIntLit>(stmtlet.expression.var)){
+                    generator.m_output << "    mov DWORD [rbp - " << generator.m_stack_size * 4 << "], " << std::get<NodeIntLit>(stmtlet.expression.var).int_lit.value.value() << "\n";
+                }
+                // checks if the variable is assigned to another variable such as let y = x;
+                // since we cant move from memory to memory, we have to store the value we are accesing into a temporary register like rax in this instance
+                if(std::holds_alternative<NodeIdent>(stmtlet.expression.var)){
+                    NodeIdent identifier = std::get<NodeIdent>(stmtlet.expression.var);
+                    std::unordered_map<std::string,size_t>::const_iterator got = generator.m_variables.find (identifier.ident.value.value());
+
+                    if ( got == generator.m_variables.end() ){
+                        std::cerr << "Error: variable not declared";
+                        exit(EXIT_FAILURE);
+                    }else {
+                        generator.m_output;
+                        generator.m_output << "    mov rax, [rbp - " << generator.m_variables[identifier.ident.value.value()] * 4 <<"]\n";
+                        generator.m_output << "    mov [rbp - " << generator.m_stack_size * 4 << "], rax\n";
+                    }
+                }
+                // increment stack size because we added a variable
                 generator.m_stack_size++;
             };
 
@@ -90,13 +93,15 @@ public:
         m_output << "section .text\n";
         m_output <<"global main\n";
         m_output <<"main:\n";
+        // stack frame created here.
+        // i would like to do this for every function created then id have to make a new scope.
         m_output << "    push rbp\n";
         m_output << "    mov rbp, rsp\n";
 
         for(auto stmt : m_prog.stmts){
             gen_stmt(stmt);
         }
-
+        // end of stack frame. restores rbp
         m_output << "    LEAVE";
 
         return m_output.str();
